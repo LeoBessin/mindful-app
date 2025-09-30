@@ -1,15 +1,20 @@
+'use client';
+
 import { ResourceLibrary } from "@/components/resource-library"
 import { BackButton } from "@/components/back-button"
+import { useTranslation } from "react-i18next"
 
 export default function LibraryPage() {
+  const { t } = useTranslation()
+
   return (
     <main className="min-h-screen pb-20">
       <div className="mx-auto max-w-2xl px-4 py-8 space-y-6">
         <div className="flex items-center gap-4">
           <BackButton />
           <div>
-            <h1 className="text-2xl font-medium text-balance">Resource Library</h1>
-            <p className="text-sm text-muted-foreground">Tips and techniques for mental wellness</p>
+            <h1 className="text-2xl font-medium text-balance">{t('library')}</h1>
+            <p className="text-sm text-muted-foreground">{t('wellness_resources')}</p>
           </div>
         </div>
         <ResourceLibrary />

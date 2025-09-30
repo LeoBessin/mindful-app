@@ -3,6 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Sparkles } from "lucide-react"
 import { useEffect, useState } from "react"
+import { useTranslation } from "react-i18next"
 
 type CheckIn = {
   mood: "great" | "okay" | "low"
@@ -12,155 +13,126 @@ type CheckIn = {
 }
 
 type Tip = {
-  title: string
-  description: string
+  titleKey: string
+  descriptionKey: string
   condition?: (checkIns: CheckIn[]) => boolean
 }
 
-const tips: Tip[] = [
-  // Stress-related tips
-  {
-    title: "Try box breathing",
-    description: "When stress is high, 4-4-4-4 breathing can quickly calm your nervous system.",
-    condition: (checkIns) => {
-      const recent = checkIns.slice(-3)
-      return recent.some((c) => c.stress === "high")
-    },
-  },
-  {
-    title: "Take a mindful break",
-    description: "Step away for 5 minutes. A short pause can reset your stress response.",
-    condition: (checkIns) => {
-      const recent = checkIns.slice(-2)
-      return recent.some((c) => c.stress === "high" || c.stress === "medium")
-    },
-  },
-
-  // Energy-related tips
-  {
-    title: "Gentle movement helps",
-    description: "A short walk or light stretching can naturally boost your energy levels.",
-    condition: (checkIns) => {
-      const recent = checkIns.slice(-2)
-      return recent.some((c) => c.energy === "low")
-    },
-  },
-  {
-    title: "Check your hydration",
-    description: "Low energy often means dehydration. Drink a glass of water mindfully.",
-    condition: (checkIns) => {
-      const recent = checkIns.slice(-3)
-      return recent.filter((c) => c.energy === "low").length >= 2
-    },
-  },
-  {
-    title: "Honor your rest needs",
-    description: "Consistent low energy is your body asking for rest. Consider an early night.",
-    condition: (checkIns) => {
-      const recent = checkIns.slice(-5)
-      return recent.filter((c) => c.energy === "low").length >= 3
-    },
-  },
-
-  // Mood-related tips
-  {
-    title: "Connect with someone",
-    description: "Reach out to a friend or loved one. Connection can lift your spirits.",
-    condition: (checkIns) => {
-      const recent = checkIns.slice(-2)
-      return recent.some((c) => c.mood === "low")
-    },
-  },
-  {
-    title: "Practice gratitude",
-    description: "Write down three small things you appreciate today. It shifts perspective.",
-    condition: (checkIns) => {
-      const recent = checkIns.slice(-3)
-      return recent.filter((c) => c.mood === "low" || c.mood === "okay").length >= 2
-    },
-  },
-  {
-    title: "Get outside",
-    description: "Natural light and fresh air can improve mood. Even 5 minutes helps.",
-    condition: (checkIns) => {
-      const recent = checkIns.slice(-2)
-      return recent.some((c) => c.mood === "low")
-    },
-  },
-
-  // Positive reinforcement
-  {
-    title: "You're doing great",
-    description: "Your consistent check-ins show commitment to your well-being. Keep it up!",
-    condition: (checkIns) => {
-      return checkIns.length >= 5
-    },
-  },
-  {
-    title: "Celebrate your progress",
-    description: "You've been taking care of yourself. That's something to be proud of.",
-    condition: (checkIns) => {
-      const recent = checkIns.slice(-3)
-      return recent.filter((c) => c.mood === "great").length >= 2
-    },
-  },
-
-  // General wellness tips
-  {
-    title: "Take a mindful breath",
-    description: "Pause for 3 deep breaths. Inhale for 4 counts, hold for 4, exhale for 6.",
-  },
-  {
-    title: "Step outside",
-    description: "Even 5 minutes in fresh air can reset your mind and boost your mood.",
-  },
-  {
-    title: "Stretch your body",
-    description: "Gentle stretching releases tension and improves circulation.",
-  },
-  {
-    title: "Write it down",
-    description: "Journaling your thoughts can help process emotions and reduce stress.",
-  },
-  {
-    title: "Listen to your body",
-    description: "Notice what you need right now. Rest, movement, nourishment, or connection?",
-  },
-  {
-    title: "Set a small intention",
-    description: "Choose one kind thing to do for yourself today, no matter how small.",
-  },
-]
-
 export function TodaysTip() {
-  const [tip, setTip] = useState(tips[0])
+  const { t } = useTranslation()
+  const [tip, setTip] = useState<Tip | null>(null)
   const [mounted, setMounted] = useState(false)
+
+  const tips: Tip[] = [
+    // Stress-related tips
+    {
+      titleKey: "try_box_breathing",
+      descriptionKey: "box_breathing_description",
+      condition: (checkIns) => {
+        const recent = checkIns.slice(-3)
+        return recent.some((c) => c.stress === "high")
+      },
+    },
+    {
+      titleKey: "take_mindful_break",
+      descriptionKey: "mindful_break_description",
+      condition: (checkIns) => {
+        const recent = checkIns.slice(-2)
+        return recent.some((c) => c.stress === "high" || c.stress === "medium")
+      },
+    },
+
+    // Energy-related tips
+    {
+      titleKey: "gentle_movement_helps",
+      descriptionKey: "gentle_movement_description",
+      condition: (checkIns) => {
+        const recent = checkIns.slice(-2)
+        return recent.some((c) => c.energy === "low")
+      },
+    },
+    {
+      titleKey: "check_your_hydration",
+      descriptionKey: "hydration_description",
+      condition: (checkIns) => {
+        const recent = checkIns.slice(-3)
+        return recent.filter((c) => c.energy === "low").length >= 2
+      },
+    },
+    {
+      titleKey: "honor_rest_needs",
+      descriptionKey: "rest_needs_description",
+      condition: (checkIns) => {
+        const recent = checkIns.slice(-5)
+        return recent.filter((c) => c.energy === "low").length >= 3
+      },
+    },
+
+    // Mood-related tips
+    {
+      titleKey: "connect_with_someone",
+      descriptionKey: "connect_description",
+      condition: (checkIns) => {
+        const recent = checkIns.slice(-2)
+        return recent.some((c) => c.mood === "low")
+      },
+    },
+    {
+      titleKey: "practice_gratitude",
+      descriptionKey: "gratitude_description",
+      condition: (checkIns) => {
+        const recent = checkIns.slice(-3)
+        return recent.filter((c) => c.mood === "low" || c.mood === "okay").length >= 2
+      },
+    },
+
+    // General tips
+    {
+      titleKey: "gentle_self_compassion",
+      descriptionKey: "self_compassion_description",
+    },
+    {
+      titleKey: "celebrate_small_wins",
+      descriptionKey: "small_wins_description",
+    },
+    {
+      titleKey: "listen_to_your_body",
+      descriptionKey: "listen_body_description",
+    },
+  ]
 
   useEffect(() => {
     setMounted(true)
-    const data = localStorage.getItem("checkIns")
-    const checkIns: CheckIn[] = data ? JSON.parse(data) : []
 
-    const personalizedTips = tips.filter((t) => !t.condition || t.condition(checkIns))
+    // Get stored check-ins
+    const storedCheckIns = localStorage.getItem("checkIns")
+    const checkIns: CheckIn[] = storedCheckIns ? JSON.parse(storedCheckIns) : []
 
-    const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000)
-    setTip(personalizedTips[dayOfYear % personalizedTips.length])
+    // Find applicable tips based on recent check-ins
+    const applicableTips = tips.filter((tip) => !tip.condition || tip.condition(checkIns))
+
+    // Select a random tip from applicable tips
+    const selectedTip = applicableTips[Math.floor(Math.random() * applicableTips.length)]
+    setTip(selectedTip)
   }, [])
 
-  if (!mounted) {
+  if (!mounted || !tip) {
     return null
   }
 
   return (
-    <Card className="border-accent/30 bg-gradient-to-br from-accent/5 to-accent/10">
-      <CardContent className="pt-6 pb-6">
-        <div className="flex gap-4">
-          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
-            <Sparkles className="w-5 h-5 text-accent-foreground" />
+    <Card className="border-amber-200/50 bg-gradient-to-r from-amber-50/50 to-orange-50/50">
+      <CardContent className="pt-6">
+        <div className="flex gap-3">
+          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
+            <Sparkles className="w-5 h-5 text-amber-600" />
           </div>
           <div className="space-y-1">
-            <h3 className="font-medium text-foreground">{tip.title}</h3>
-            <p className="text-sm text-muted-foreground text-balance leading-relaxed">{tip.description}</p>
+            <h3 className="text-sm font-medium text-muted-foreground">{t('todays_tip')}</h3>
+            <h4 className="font-medium text-foreground">{t(tip.titleKey)}</h4>
+            <p className="text-sm text-muted-foreground text-balance leading-relaxed">
+              {t(tip.descriptionKey)}
+            </p>
           </div>
         </div>
       </CardContent>
