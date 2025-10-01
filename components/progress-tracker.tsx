@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MoodChart } from "@/components/mood-chart"
@@ -8,6 +9,7 @@ import { EnergyChart } from "@/components/energy-chart"
 import { StressChart } from "@/components/stress-chart"
 import { StreakCard } from "@/components/streak-card"
 import { InsightsCard } from "@/components/insights-card"
+import { MBIProgressChart } from "@/components/mbi-progress-chart"
 
 type CheckIn = {
   mood: "great" | "okay" | "low"
@@ -16,19 +18,44 @@ type CheckIn = {
   timestamp: string
 }
 
+type MBIResult = {
+  level: "high" | "medium" | "low"
+  timestamp: string
+  answers: Record<string, number>
+}
+
 export function ProgressTracker() {
+  const { t } = useTranslation()
   const [checkIns, setCheckIns] = useState<CheckIn[]>([])
+  const [mbiResults, setMBIResults] = useState<MBIResult[]>([])
   const [mounted, setMounted] = useState(false)
+  const [isHydrated, setIsHydrated] = useState(false)
 
   useEffect(() => {
+    setIsHydrated(true)
     setMounted(true)
-    const data = localStorage.getItem("checkIns")
-    if (data) {
-      setCheckIns(JSON.parse(data))
+
+    // Load check-ins data
+    const checkInsData = localStorage.getItem("checkIns")
+    if (checkInsData) {
+      setCheckIns(JSON.parse(checkInsData))
+    }
+
+    // Load MBI test results
+    const mbiData = localStorage.getItem("mbiTestResults")
+    if (mbiData) {
+      try {
+        const results = JSON.parse(mbiData)
+        if (Array.isArray(results)) {
+          setMBIResults(results)
+        }
+      } catch (error) {
+        console.error("Error parsing MBI results:", error)
+      }
     }
   }, [])
 
-  if (!mounted) {
+  if (!isHydrated || !mounted) {
     return (
       <div className="space-y-4">
         <Card>
@@ -40,7 +67,11 @@ export function ProgressTracker() {
     )
   }
 
-  if (checkIns.length === 0) {
+  const hasCheckIns = checkIns.length > 0
+  const hasMBIResults = mbiResults.length > 0
+  const hasAnyData = hasCheckIns || hasMBIResults
+
+  if (!hasAnyData) {
     return (
       <Card className="border-border/50">
         <CardContent className="pt-12 pb-12 text-center">
@@ -60,9 +91,9 @@ export function ProgressTracker() {
               />
             </svg>
           </div>
-          <h3 className="text-xl font-medium mb-2">No check-ins yet</h3>
+          <h3 className="text-xl font-medium mb-2">{t('no_data_yet')}</h3>
           <p className="text-muted-foreground text-balance">
-            Complete your first daily check-in to start tracking your wellness journey
+            {t('complete_activities_to_track_progress')}
           </p>
         </CardContent>
       </Card>
@@ -72,52 +103,71 @@ export function ProgressTracker() {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2">
-        <StreakCard checkIns={checkIns} />
-        <InsightsCard checkIns={checkIns} />
+        <StreakCard checkIns={checkIns} mbiResults={mbiResults} />
+        <InsightsCard checkIns={checkIns} mbiResults={mbiResults} />
       </div>
 
-      <Tabs defaultValue="mood" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="mood">Mood</TabsTrigger>
-          <TabsTrigger value="energy">Energy</TabsTrigger>
-          <TabsTrigger value="stress">Stress</TabsTrigger>
+      <Tabs defaultValue="mbi" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-4">
+          {hasMBIResults && <TabsTrigger value="mbi">{t('mindfulness')}</TabsTrigger>}
+          {hasCheckIns && <TabsTrigger value="mood">{t('mood')}</TabsTrigger>}
+          {hasCheckIns && <TabsTrigger value="energy">{t('energy')}</TabsTrigger>}
+          {hasCheckIns && <TabsTrigger value="stress">{t('stress')}</TabsTrigger>}
         </TabsList>
 
-        <TabsContent value="mood" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Mood Trends</CardTitle>
-              <CardDescription>How your mood has changed over time</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <MoodChart checkIns={checkIns} />
-            </CardContent>
-          </Card>
-        </TabsContent>
+        {hasMBIResults && (
+          <TabsContent value="mbi" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('mindfulness_progress')}</CardTitle>
+                <CardDescription>{t('your_mindfulness_journey_over_time')}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <MBIProgressChart mbiResults={mbiResults} />
+              </CardContent>
+            </Card>
+          </TabsContent>
+        )}
 
-        <TabsContent value="energy" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Energy Levels</CardTitle>
-              <CardDescription>Track your energy patterns throughout your journey</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <EnergyChart checkIns={checkIns} />
-            </CardContent>
-          </Card>
-        </TabsContent>
+        {hasCheckIns && (
+          <>
+            <TabsContent value="mood" className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('mood_trends')}</CardTitle>
+                  <CardDescription>{t('how_mood_changed_over_time')}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <MoodChart checkIns={checkIns} />
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-        <TabsContent value="stress" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Stress Levels</CardTitle>
-              <CardDescription>Monitor your stress patterns and progress</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <StressChart checkIns={checkIns} />
-            </CardContent>
-          </Card>
-        </TabsContent>
+            <TabsContent value="energy" className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('energy_levels')}</CardTitle>
+                  <CardDescription>{t('track_energy_patterns')}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <EnergyChart checkIns={checkIns} />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="stress" className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('stress_levels')}</CardTitle>
+                  <CardDescription>{t('monitor_stress_patterns')}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <StressChart checkIns={checkIns} />
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </>
+        )}
       </Tabs>
     </div>
   )
