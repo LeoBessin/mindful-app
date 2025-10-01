@@ -67,9 +67,11 @@ export function MoodChart({ checkIns }: MoodChartProps) {
           type="monotone"
           dataKey="mood"
           stroke="hsl(var(--chart-1))"
-          strokeWidth={2}
+          strokeWidth={3}
           fill="url(#moodGradient)"
           fillOpacity={1}
+          dot={{ fill: "hsl(var(--chart-1))", strokeWidth: 2, r: 4 }}
+          activeDot={{ r: 6, stroke: "hsl(var(--chart-1))", strokeWidth: 2 }}
         />
       </AreaChart>
     </ChartContainer>

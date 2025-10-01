@@ -67,9 +67,11 @@ export function EnergyChart({ checkIns }: EnergyChartProps) {
           type="monotone"
           dataKey="energy"
           stroke="hsl(var(--chart-2))"
-          strokeWidth={2}
+          strokeWidth={3}
           fill="url(#energyGradient)"
           fillOpacity={1}
+          dot={{ fill: "hsl(var(--chart-2))", strokeWidth: 2, r: 4 }}
+          activeDot={{ r: 6, stroke: "hsl(var(--chart-2))", strokeWidth: 2 }}
         />
       </AreaChart>
     </ChartContainer>

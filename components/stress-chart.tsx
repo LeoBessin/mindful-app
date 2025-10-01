@@ -67,9 +67,11 @@ export function StressChart({ checkIns }: StressChartProps) {
           type="monotone"
           dataKey="stress"
           stroke="hsl(var(--chart-3))"
-          strokeWidth={2}
+          strokeWidth={3}
           fill="url(#stressGradient)"
           fillOpacity={1}
+          dot={{ fill: "hsl(var(--chart-3))", strokeWidth: 2, r: 4 }}
+          activeDot={{ r: 6, stroke: "hsl(var(--chart-3))", strokeWidth: 2 }}
         />
       </AreaChart>
     </ChartContainer>
