@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Wind, Heart, Brain, Sparkles, Play } from "lucide-react"
 import { ExercisePlayer } from "@/components/exercise-player"
+import { useTranslation } from "react-i18next"
 
 type Exercise = {
   id: string
@@ -134,6 +135,7 @@ const categoryColors = {
 
 export function ExerciseLibrary() {
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null)
+  const { t } = useTranslation()
 
   if (selectedExercise) {
     return <ExercisePlayer exercise={selectedExercise} onClose={() => setSelectedExercise(null)} />
@@ -152,14 +154,14 @@ export function ExerciseLibrary() {
                     <Icon className="w-5 h-5 text-primary" />
                   </div>
                   <div className="space-y-1 flex-1">
-                    <CardTitle className="text-lg font-medium">{exercise.title}</CardTitle>
-                    <CardDescription className="text-balance leading-relaxed">{exercise.description}</CardDescription>
+                    <CardTitle className="text-lg font-medium">{t(`exercise.${exercise.id}.title`)}</CardTitle>
+                    <CardDescription className="text-balance leading-relaxed">{t(`exercise.${exercise.id}.description`)}</CardDescription>
                   </div>
                 </div>
               </div>
               <div className="flex items-center gap-2 pt-2">
                 <Badge variant="outline" className={categoryColors[exercise.category]}>
-                  {exercise.category}
+                  {t(`exercise.category.${exercise.category}`)}
                 </Badge>
                 <span className="text-xs text-muted-foreground">{exercise.duration} min</span>
               </div>
@@ -167,7 +169,7 @@ export function ExerciseLibrary() {
             <CardContent>
               <Button className="w-full" onClick={() => setSelectedExercise(exercise)}>
                 <Play className="w-4 h-4 mr-2" />
-                Start Exercise
+                {t("exercise.start")}
               </Button>
             </CardContent>
           </Card>

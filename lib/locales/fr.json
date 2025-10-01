@@ -74,5 +74,23 @@
   "progress": "Progrès",
   "your_wellness_insights": "Vos insights de bien-être",
   "library": "Bibliothèque",
-  "wellness_resources": "Ressources et techniques de bien-être"
+  "wellness_resources": "Ressources et techniques de bien-être",
+
+  "exercise.box-breathing.title": "Respiration en boîte",
+  "exercise.box-breathing.description": "Une technique apaisante utilisée par les athlètes et les professionnels pour réduire le stress",
+  "exercise.body-scan.title": "Méditation scan corporel",
+  "exercise.body-scan.description": "Libérez les tensions en portant votre attention sur chaque partie de votre corps",
+  "exercise.progressive-relaxation.title": "Relaxation musculaire progressive",
+  "exercise.progressive-relaxation.description": "Contractez et relâchez systématiquement les groupes musculaires pour réduire le stress physique",
+  "exercise.mindful-observation.title": "Observation consciente",
+  "exercise.mindful-observation.description": "Pratiquez la pleine conscience en observant votre environnement",
+  "exercise.4-7-8-breathing.title": "Respiration 4-7-8",
+  "exercise.4-7-8-breathing.description": "Un tranquillisant naturel pour le système nerveux, parfait avant de dormir",
+  "exercise.gratitude-reflection.title": "Réflexion sur la gratitude",
+  "exercise.gratitude-reflection.description": "Changez votre état d'esprit en vous concentrant sur ce que vous appréciez",
+  "exercise.category.breathing": "Respiration",
+  "exercise.category.meditation": "Méditation",
+  "exercise.category.relaxation": "Relaxation",
+  "exercise.category.mindfulness": "Pleine conscience",
+  "exercise.start": "Commencer l'exercice"
 }

@@ -74,5 +74,23 @@
   "progress": "Progress",
   "your_wellness_insights": "Your wellness insights",
   "library": "Library",
-  "wellness_resources": "Wellness resources and techniques"
+  "wellness_resources": "Wellness resources and techniques",
+
+  "exercise.box-breathing.title": "Box Breathing",
+  "exercise.box-breathing.description": "A calming technique used by athletes and professionals to reduce stress",
+  "exercise.body-scan.title": "Body Scan Meditation",
+  "exercise.body-scan.description": "Release tension by bringing awareness to each part of your body",
+  "exercise.progressive-relaxation.title": "Progressive Muscle Relaxation",
+  "exercise.progressive-relaxation.description": "Systematically tense and release muscle groups to reduce physical stress",
+  "exercise.mindful-observation.title": "Mindful Observation",
+  "exercise.mindful-observation.description": "Practice present-moment awareness by observing your surroundings",
+  "exercise.4-7-8-breathing.title": "4-7-8 Breathing",
+  "exercise.4-7-8-breathing.description": "A natural tranquilizer for the nervous system, perfect before sleep",
+  "exercise.gratitude-reflection.title": "Gratitude Reflection",
+  "exercise.gratitude-reflection.description": "Shift your mindset by focusing on things you appreciate",
+  "exercise.category.breathing": "Breathing",
+  "exercise.category.meditation": "Meditation",
+  "exercise.category.relaxation": "Relaxation",
+  "exercise.category.mindfulness": "Mindfulness",
+  "exercise.start": "Start Exercise"
 }
