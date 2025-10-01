@@ -20,4 +20,11 @@ i18n
     // Remove LanguageDetector and detection config to prevent hydration issues
   });
 
+// Add event listener to save language changes to localStorage
+i18n.on('languageChanged', (lng) => {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('selectedLanguage', lng);
+  }
+});
+
 export default i18n;

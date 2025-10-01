@@ -1,17 +1,60 @@
 'use client'
 
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Wind, TrendingUp, Library, Settings } from "lucide-react"
+import { Wind, TrendingUp, Library, Settings, Star } from "lucide-react"
 import { useTranslation } from "react-i18next"
+
+type MBILevel = "high" | "medium" | "low"
 
 export function QuickActions() {
   const { t } = useTranslation()
+  const [hasRecommendations, setHasRecommendations] = useState(false)
+  const [mbiLevel, setMbiLevel] = useState<MBILevel | null>(null)
+
+  useEffect(() => {
+    // Check if user has MBI test results and get the latest level
+    const storedResults = localStorage.getItem("mbiTestResults")
+    if (storedResults) {
+      const results = JSON.parse(storedResults)
+      if (results.length > 0) {
+        const latestResult = results[results.length - 1]
+        setHasRecommendations(true)
+        setMbiLevel(latestResult.level)
+      }
+    }
+  }, [])
+
+  const getRecommendationDescription = (level: MBILevel) => {
+    switch (level) {
+      case "low":
+        return t('recommendations_for_beginners')
+      case "medium":
+        return t('recommendations_for_intermediate')
+      case "high":
+        return t('recommendations_for_advanced')
+      default:
+        return t('recommendations_for_beginners')
+    }
+  }
 
   return (
     <div className="space-y-3">
       <h2 className="text-sm font-medium text-muted-foreground px-1">{t('quick_actions')}</h2>
       <div className="grid gap-3">
+        {hasRecommendations && mbiLevel && (
+          <Link href="/exercises?recommended=true" className="block">
+            <Button variant="outline" className="w-full justify-start h-auto py-4 px-4 bg-gradient-to-r from-primary/5 to-transparent border-primary/20" size="lg">
+              <Star className="w-5 h-5 mr-3 text-primary fill-current" />
+              <div className="text-left">
+                <div className="font-medium">{t('personalized_recommendations')}</div>
+                <div className="text-xs text-muted-foreground">{getRecommendationDescription(mbiLevel)}</div>
+              </div>
+            </Button>
+          </Link>
+        )}
+
         <Link href="/exercises" className="block">
           <Button variant="outline" className="w-full justify-start h-auto py-4 px-4 bg-transparent" size="lg">
             <Wind className="w-5 h-5 mr-3 text-primary" />

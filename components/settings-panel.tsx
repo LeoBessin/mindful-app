@@ -33,6 +33,7 @@ export function SettingsPanel() {
 
   const handleLanguageChange = (language: string) => {
     i18n.changeLanguage(language)
+    localStorage.setItem("selectedLanguage", language)
   }
 
   const handleClearData = () => {
