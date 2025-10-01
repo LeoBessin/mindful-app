@@ -65,12 +65,13 @@ export function MBITestCard() {
     const averageScore = totalScore / scores.length
 
     let level: MBILevel
-    if (averageScore >= 2.5) {
-      level = "high"
-    } else if (averageScore >= 1.8) {
-      level = "medium"
+    // Inverser la logique car 1 = excellent, 2 = moyen, 3 = faible
+    if (averageScore <= 1.5) {
+      level = "high"    // Score faible = Excellent niveau de pleine conscience
+    } else if (averageScore <= 2.2) {
+      level = "medium"  // Score moyen = Niveau modéré de pleine conscience
     } else {
-      level = "low"
+      level = "low"     // Score élevé = Niveau de base de pleine conscience
     }
 
     setResult(level)

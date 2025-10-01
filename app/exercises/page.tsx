@@ -13,18 +13,64 @@ export default function ExercisesPage() {
   const searchParams = useSearchParams()
   const [showRecommended, setShowRecommended] = useState(false)
   const [hasRecommendations, setHasRecommendations] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isHydrated, setIsHydrated] = useState(false)
 
   useEffect(() => {
-    // Check if we should show recommendations by default
-    const shouldShowRecommended = searchParams?.get('recommended') === 'true'
+    // Mark as hydrated first
+    setIsHydrated(true)
 
-    // Check if user has MBI test results
-    const storedResults = localStorage.getItem("mbiTestResults")
-    const hasResults = Boolean(storedResults && JSON.parse(storedResults).length > 0)
+    // Add a small delay to ensure localStorage is available
+    const checkRecommendations = () => {
+      try {
+        // Check if we should show recommendations by default
+        const shouldShowRecommended = searchParams?.get('recommended') === 'true'
 
-    setHasRecommendations(hasResults)
-    setShowRecommended(shouldShowRecommended && hasResults)
+        // Check if user has MBI test results
+        const storedResults = localStorage.getItem("mbiTestResults")
+
+        let hasResults = false
+        if (storedResults) {
+          try {
+            const results = JSON.parse(storedResults)
+            hasResults = Array.isArray(results) && results.length > 0
+          } catch (e) {
+            hasResults = false
+          }
+        }
+
+        setHasRecommendations(hasResults)
+        setShowRecommended(shouldShowRecommended && hasResults)
+        setIsLoading(false)
+      } catch (error) {
+        setHasRecommendations(false)
+        setShowRecommended(false)
+        setIsLoading(false)
+      }
+    }
+
+    // Small delay to ensure component is mounted and language is loaded
+    const timeoutId = setTimeout(checkRecommendations, 150)
+
+    return () => clearTimeout(timeoutId)
   }, [searchParams])
+
+  // Don't render translated content until hydration is complete
+  if (!isHydrated) {
+    return (
+      <main className="min-h-screen pb-20">
+        <div className="mx-auto max-w-2xl px-4 py-8 space-y-6">
+          <div className="flex items-center gap-4">
+            <BackButton />
+            <div className="flex-1">
+              <h1 className="text-2xl font-medium text-balance">Mindfulness Exercises</h1>
+              <p className="text-sm text-muted-foreground">Guided practices for calm and clarity</p>
+            </div>
+          </div>
+        </div>
+      </main>
+    )
+  }
 
   return (
     <main className="min-h-screen pb-20">
@@ -37,7 +83,7 @@ export default function ExercisesPage() {
           </div>
         </div>
 
-        {hasRecommendations && (
+        {!isLoading && hasRecommendations && (
           <div className="flex gap-2">
             <Button
               variant={showRecommended ? "default" : "outline"}
@@ -60,10 +106,14 @@ export default function ExercisesPage() {
           </div>
         )}
 
-        {showRecommended && hasRecommendations ? (
-          <RecommendedExercises />
-        ) : (
-          <RecommendedExercises showAll={true} />
+        {!isLoading && (
+          <>
+            {showRecommended && hasRecommendations ? (
+              <RecommendedExercises />
+            ) : (
+              <RecommendedExercises showAll={true} />
+            )}
+          </>
         )}
       </div>
     </main>

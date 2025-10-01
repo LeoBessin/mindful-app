@@ -143,20 +143,49 @@ interface RecommendedExercisesProps {
 export function RecommendedExercises({ mbiLevel, showAll = false }: RecommendedExercisesProps) {
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null)
   const [latestMBIResult, setLatestMBIResult] = useState<MBILevel | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
   const { t } = useTranslation()
 
   useEffect(() => {
     // Get the latest MBI test result from localStorage if no mbiLevel is provided
-    if (!mbiLevel) {
-      const storedResults = localStorage.getItem("mbiTestResults")
-      if (storedResults) {
-        const results = JSON.parse(storedResults)
-        if (results.length > 0) {
-          const latestResult = results[results.length - 1]
-          setLatestMBIResult(latestResult.level)
+    const loadMBIResults = () => {
+      try {
+        if (!mbiLevel) {
+          const storedResults = localStorage.getItem("mbiTestResults")
+
+          if (storedResults) {
+            try {
+              const results = JSON.parse(storedResults)
+
+              if (Array.isArray(results) && results.length > 0) {
+                const latestResult = results[results.length - 1]
+
+                if (latestResult && latestResult.level) {
+                  setLatestMBIResult(latestResult.level)
+                } else {
+                  setLatestMBIResult(null)
+                }
+              } else {
+                setLatestMBIResult(null)
+              }
+            } catch (parseError) {
+              setLatestMBIResult(null)
+            }
+          } else {
+            setLatestMBIResult(null)
+          }
         }
+        setIsLoading(false)
+      } catch (error) {
+        setLatestMBIResult(null)
+        setIsLoading(false)
       }
     }
+
+    // Small delay to ensure localStorage is available
+    const timeoutId = setTimeout(loadMBIResults, 50)
+
+    return () => clearTimeout(timeoutId)
   }, [mbiLevel])
 
   const getRecommendedExerciseIds = (level: MBILevel) => {
@@ -178,6 +207,10 @@ export function RecommendedExercises({ mbiLevel, showAll = false }: RecommendedE
 
   if (selectedExercise) {
     return <ExercisePlayer exercise={selectedExercise} onClose={() => setSelectedExercise(null)} />
+  }
+
+  if (isLoading) {
+    return null // Return null during loading to prevent hydration mismatch
   }
 
   if (!showAll && (!currentLevel || recommendedIds.length === 0)) {

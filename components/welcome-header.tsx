@@ -19,8 +19,8 @@ export function WelcomeHeader() {
   if (!mounted) {
     return (
       <div className="space-y-2">
-        <h1 className="text-3xl font-light text-foreground">{t('hello')}</h1>
-        <p className="text-muted-foreground text-balance">{t('how_are_you_feeling_today')}</p>
+        <h1 className="text-3xl font-light text-foreground">Hello</h1>
+        <p className="text-muted-foreground text-balance">How are you feeling today?</p>
       </div>
     )
   }
